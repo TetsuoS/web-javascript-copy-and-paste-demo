@@ -145,4 +145,4 @@ context.textBaseline = 'middle';
 drawGrid('lightgray', 10, 10);
 drawCentroid();
 
-drawCircularText("Clockwise around the circle", Math.PI*2, Math.PI/8);
+drawCircularText("Hello world from DKM CEO", Math.PI*2, Math.PI/8);
