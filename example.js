@@ -29,126 +29,155 @@
  * OTHER DEALINGS IN THE SOFTWARE.
 */
 
-var canvas = document.getElementById('canvas'),
-    context = canvas.getContext('2d'),
-    rubberbandDiv = document.getElementById('rubberbandDiv'),
-    resetButton = document.getElementById('resetButton'),
-    image = new Image(),
-    mousedown = {},
-    rubberbandRectangle = {},
-    dragging = false;
+var context = document.getElementById('canvas').getContext('2d'),
+    directionCheckbox = document.getElementById('directionCheckbox'),
+    annotationCheckbox = document.getElementById('annotationCheckbox'),
+    CLOCKWISE = 1,
+    COUNTER_CLOCKWISE = 2;
 
 // Functions.....................................................
 
-function rubberbandStart(x, y) {
-	mousedown.x = x;
-	mousedown.y = y;
+function drawGrid(color, stepx, stepy) {
+   context.save()
 
-	rubberbandRectangle.left = mousedown.x;
-	rubberbandRectangle.top = mousedown.y;
+   context.strokeStyle = color;
+   context.fillStyle = '#ffffff';
+   context.lineWidth = 0.5;
+   context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
-   moveRubberbandDiv();
-   showRubberbandDiv();
-
-	dragging = true;
-}
-
-function rubberbandStretch(x, y) {
-   rubberbandRectangle.left = x < mousedown.x ? x : mousedown.x;
-   rubberbandRectangle.top  = y < mousedown.y ? y : mousedown.y;
-
-   rubberbandRectangle.width  = Math.abs(x - mousedown.x),
-   rubberbandRectangle.height = Math.abs(y - mousedown.y);
-
-   moveRubberbandDiv();
-   resizeRubberbandDiv();
-};
-
-function rubberbandEnd() {
-   var bbox = canvas.getBoundingClientRect();
-
-   try {
-      context.drawImage(canvas,
-                        rubberbandRectangle.left - bbox.left,
-                        rubberbandRectangle.top - bbox.top,
-                        rubberbandRectangle.width,
-                        rubberbandRectangle.height,
-                        0, 0, canvas.width, canvas.height);
-   }
-   catch (e) {
-      // suppress error message when mouse is released
-      // outside the canvas
+   for (var i = stepx + 0.5; i < context.canvas.width; i += stepx) {
+     context.beginPath();
+     context.moveTo(i, 0);
+     context.lineTo(i, context.canvas.height);
+     context.stroke();
    }
 
-   resetRubberbandRectangle();
+   for (var i = stepy + 0.5; i < context.canvas.height; i += stepy) {
+     context.beginPath();
+     context.moveTo(0, i);
+     context.lineTo(context.canvas.width, i);
+     context.stroke();
+   }
 
-   rubberbandDiv.style.width = 0;
-   rubberbandDiv.style.height = 0;
-
-   hideRubberbandDiv();
-
-   dragging = false;
+   context.restore();
 }
 
-function moveRubberbandDiv() {
-   rubberbandDiv.style.top  = rubberbandRectangle.top  + 'px';
-   rubberbandDiv.style.left = rubberbandRectangle.left + 'px';
+function drawText() {
+   context.save();
+   context.font = '18px Arial';
+   context.fillStyle = 'rgb(0, 0, 200)';
+   context.fillText('Two arcs, one path', 10, 30);
+
+   context.font = '16px Lucida Sans';
+   context.fillStyle = 'navy';
+   context.fillText('context.arc(300, 200, 150, 0, Math.PI*2, false)', 10, 360);
+   context.fillText('context.arc(300, 200, 100, 0, Math.PI*2, !sameDirection)', 10, 380);
+   context.restore();
 }
 
-function resizeRubberbandDiv() {
-   rubberbandDiv.style.width  = rubberbandRectangle.width  + 'px';
-   rubberbandDiv.style.height = rubberbandRectangle.height + 'px';
+function drawArcAnnotations(sameDirection) {
+   context.save();
+   context.font = '16px Lucida Sans';
+   context.fillStyle = 'blue';
+   context.fillText('CW', 345, 145);
+   context.fillText(sameDirection ? 'CW' : 'CCW', 425, 75);
+   context.restore();
 }
 
-function showRubberbandDiv() {
-   rubberbandDiv.style.display = 'inline';
+function drawOuterCircleAnnotations(sameDirection) {
+   context.save();
+   context.beginPath();
+   context.moveTo(410, 210);
+   context.lineTo(500, 250);
+   context.stroke();
+
+   context.beginPath();
+   context.arc(500, 250, 3, 0, Math.PI*2, false);
+   context.fillStyle = 'navy';
+   context.fill();
+
+   context.font = '16px Lucida Sans';
+   context.fillText(sameDirection ? '+1' : '-1', 455, 225);
+   context.fillText(sameDirection ? '1' : '-1', 515, 255);
+   context.restore();
 }
 
-function hideRubberbandDiv() {
-   rubberbandDiv.style.display = 'none';
+function drawInnerCircleAnnotations(sameDirection) {
+   context.save();
+   context.beginPath();
+   context.moveTo(300, 175);
+   context.lineTo(100, 250);
+   context.stroke();
+
+   context.beginPath();
+   context.arc(100, 250, 3, 0, Math.PI*2, false);
+   context.fillStyle = 'navy';
+   context.fill();
+
+   context.font = '16px Lucida Sans';
+   context.fillText('+1', 125, 225);
+   context.fillText(sameDirection ? '+1' : '-1', 215, 185);
+   context.fillText(sameDirection ? '2' : '0', 75, 255);
+   context.restore();
 }
 
-function resetRubberbandRectangle() {
-   rubberbandRectangle = { top: 0, left: 0, width: 0, height: 0 };
+function drawAnnotations(sameDirection) {
+   context.save();
+   context.strokeStyle = 'blue';
+   drawInnerCircleAnnotations(sameDirection);
+   drawOuterCircleAnnotations(sameDirection);
+   drawArcAnnotations(sameDirection);
+   context.restore();
 }
 
-// Event handlers...............................................
+function drawTwoArcs(sameDirection) {
+   context.beginPath();
+   context.arc(300, 170, 150, 0, Math.PI*2, false); // outer: CW
+   context.arc(300, 170, 100, 0, Math.PI*2, !sameDirection); // innner
 
-canvas.onmousedown = function (e) { 
-   var x = e.x || e.clientX,
-       y = e.y || e.clientY;
-
-	e.preventDefault();
-   rubberbandStart(x, y);
-};
-
-window.onmousemove = function (e) { 
-   var x = e.x || e.clientX,
-       y = e.y || e.clientY;
-
-	e.preventDefault();
-	if (dragging) {
-      rubberbandStretch(x, y);
-    }
+   context.fill();
+   context.shadowColor = undefined;
+   context.shadowOffsetX = 0;
+   context.shadowOffsetY = 0;
+   context.stroke();
 }
 
-window.onmouseup = function (e) {
-	e.preventDefault();
-   rubberbandEnd();
-}
-
-// Event handlers..............................................
-   
-image.onload = function () { 
-	context.drawImage(image, 0, 0, canvas.width, canvas.height); 
-};
-
-resetButton.onclick = function(e) {
+function draw(sameDirection) {
    context.clearRect(0, 0, context.canvas.width,
-                            context.canvas.height);
-   context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                           context.canvas.height);
+   drawGrid('lightgray', 10, 10);
+
+   context.save();
+
+   context.shadowColor = 'rgba(0, 0, 0, 0.8)';
+   context.shadowOffsetX = 12;
+   context.shadowOffsetY = 12;
+   context.shadowBlur = 15;
+
+   drawTwoArcs(directionCheckbox.checked);
+
+   context.restore();
+
+   drawText();
+
+   if (annotationCheckbox.checked) {
+      drawAnnotations(directionCheckbox.checked);
+   }
+}
+
+// Event handlers................................................
+
+annotationCheckbox.onclick = function (e) {
+   draw(directionCheckbox.checked);
 };
+   
+directionCheckbox.onclick = function (e) {
+   draw(directionCheckbox.checked);
+};
+    
+// Initialization................................................
 
-// Initialization..............................................
+context.fillStyle = 'rgba(100, 140, 230, 0.5)';
+context.strokeStyle = context.fillStyle;//'rgba(20, 60, 150, 0.5)';
 
-image.src = 'arch.png';
+draw(directionCheckbox.checked);

@@ -31,48 +31,43 @@
 -->
 
 <html>
-   <head>
-     <title>Rubberbands with layered elements</title>
+  <head>
+    <title>Cutouts with the nonzero winding rule</title>
 
-      <style> 
-         body {
-            background: rgba(100, 145, 250, 0.3);
-         }
+    <style>
+      body {
+         background: #efefef;
+      }
+      
+      #canvas {
+         background: #ffffff;
+         -webkit-box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+         -moz-box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+         box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+      }
 
-         #canvas {
-            margin-left: 20px;
-            margin-right: 0;
-            margin-bottom: 20px;
-            border: thin solid #aaaaaa;
-            cursor: crosshair;
-            padding: 0;
-         }
+      .floatingControls {
+         position: absolute;
+         left: 475px;
+         top: 20px;
+      }
 
-         #controls {
-            margin: 20px 0px 20px 20px;
-         }
+      #canvas {
+         margin: 10px;
+      }
+    </style>
+  </head>
 
-         #rubberbandDiv {
-            position: absolute;
-            border: 3px solid yellow;
-            cursor: crosshair;
-            display: none;
-         }
-
-      </style>
-   </head>
-
-  <body>
-      <div id='controls'>
-         <input type='button' id='resetButton' value='Reset'/>
+   <body>
+      <div class='floatingControls'>
+         <input id='directionCheckbox' type='checkbox'/>Same direction<br/>
+         <input id='annotationCheckbox' type='checkbox'/>Annotations<br/>
       </div>
-
-      <div id='rubberbandDiv'></div>
-
-      <canvas id='canvas' width='800' height='520'>
+      
+      <canvas id='canvas' width='600' height='400'>
          Canvas not supported
       </canvas>
-        
-     <script src='example.js'></script>
+
+    <script src = 'example.js'></script>
   </body>
 </html>
