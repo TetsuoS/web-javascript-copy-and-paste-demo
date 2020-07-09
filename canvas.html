@@ -31,43 +31,27 @@
 -->
 
 <html>
-  <head>
-    <title>Cutouts with the nonzero winding rule</title>
-
-    <style>
-      body {
-         background: #efefef;
-      }
-      
-      #canvas {
-         background: #ffffff;
-         -webkit-box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
-         -moz-box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
-         box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
-      }
-
-      .floatingControls {
-         position: absolute;
-         left: 475px;
-         top: 20px;
-      }
-
-      #canvas {
-         margin: 10px;
-      }
-    </style>
-  </head>
+   <head>
+      <title>Telescoping with the Canvas clip region</title>
+      <style>
+         #canvas {
+            margin-left: 10px;
+            margin-top: 10px;
+              border: 1px solid cornflowerblue;
+            background: #eeeeee;
+            border: thin solid #aaaaaa;
+            -webkit-box-shadow: rgba(200, 200, 255, 0.9) 5px 5px 10px;
+            -moz-box-shadow: rgba(200, 200, 255, 0.9) 5px 5px 10px;
+            box-shadow: rgba(200, 200, 255, 0.9) 5px 5px 10px;
+         }
+      </style>
+   </head>
 
    <body>
-      <div class='floatingControls'>
-         <input id='directionCheckbox' type='checkbox'/>Same direction<br/>
-         <input id='annotationCheckbox' type='checkbox'/>Annotations<br/>
-      </div>
-      
-      <canvas id='canvas' width='600' height='400'>
+        <canvas id='canvas' width='600' height='420'>
          Canvas not supported
-      </canvas>
+        </canvas>
 
-    <script src = 'example.js'></script>
-  </body>
+      <script src='example.js'></script>
+   </body>
 </html>
